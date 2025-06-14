@@ -1,0 +1,5 @@
+USE car_dealership;
+SELECT *
+FROM sales_contracts
+WHERE dealership_id = 1 -- Change as needed
+  AND sale_date BETWEEN '2023-01-01' AND '2023-12-31'; -- Change dates as needed 
