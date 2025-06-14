@@ -1,0 +1,84 @@
+-- Drop and recreate the database
+DROP DATABASE IF EXISTS car_dealership;
+CREATE DATABASE car_dealership;
+USE car_dealership;
+
+-- Create table: dealerships
+CREATE TABLE dealerships (
+    dealership_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    address VARCHAR(50),
+    phone VARCHAR(12)
+);
+
+-- Create table: vehicles
+CREATE TABLE vehicles (
+    VIN CHAR(17) PRIMARY KEY,
+    make VARCHAR(30),
+    model VARCHAR(30),
+    year INT,
+    color VARCHAR(20),
+    price DECIMAL(10,2),
+    SOLD BOOLEAN DEFAULT FALSE
+);
+
+-- Create table: inventory
+CREATE TABLE inventory (
+    dealership_id INT,
+    VIN CHAR(17),
+    PRIMARY KEY (dealership_id, VIN),
+    FOREIGN KEY (dealership_id) REFERENCES dealerships(dealership_id) ON DELETE CASCADE,
+    FOREIGN KEY (VIN) REFERENCES vehicles(VIN) ON DELETE CASCADE
+);
+
+-- Create table: sales_contracts
+CREATE TABLE sales_contracts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    VIN CHAR(17),
+    dealership_id INT,
+    customer_name VARCHAR(50),
+    sale_date DATE,
+    sale_price DECIMAL(10,2),
+    FOREIGN KEY (VIN) REFERENCES vehicles(VIN),
+    FOREIGN KEY (dealership_id) REFERENCES dealerships(dealership_id)
+);
+
+-- Create table: lease_contracts (Optional)
+CREATE TABLE lease_contracts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    VIN CHAR(17),
+    dealership_id INT,
+    customer_name VARCHAR(50),
+    lease_start DATE,
+    lease_end DATE,
+    monthly_payment DECIMAL(10,2),
+    FOREIGN KEY (VIN) REFERENCES vehicles(VIN),
+    FOREIGN KEY (dealership_id) REFERENCES dealerships(dealership_id)
+);
+
+-- Populate table: dealerships
+INSERT INTO dealerships (name, address, phone) VALUES
+('Auto World', '123 Main St', '555-123-4567'),
+('Car Galaxy', '456 Elm St', '555-987-6543');
+
+-- Populate table: vehicles
+INSERT INTO vehicles (VIN, make, model, year, color, price, SOLD) VALUES
+('1HGCM82633A004352', 'Honda', 'Accord', 2020, 'Red', 22000.00, FALSE),
+('1FAFP404X1F192345', 'Ford', 'Mustang', 2021, 'Red', 35000.00, FALSE),
+('2T1BURHE5JC123456', 'Toyota', 'Corolla', 2019, 'Blue', 18000.00, TRUE),
+('3VW2B7AJ5FM123456', 'Volkswagen', 'Jetta', 2022, 'Black', 25000.00, FALSE);
+
+-- Populate table: inventory
+INSERT INTO inventory (dealership_id, VIN) VALUES
+(1, '1HGCM82633A004352'),
+(1, '2T1BURHE5JC123456'),
+(2, '1FAFP404X1F192345'),
+(2, '3VW2B7AJ5FM123456');
+
+-- Populate table: sales_contracts
+INSERT INTO sales_contracts (VIN, dealership_id, customer_name, sale_date, sale_price) VALUES
+('2T1BURHE5JC123456', 1, 'John Doe', '2023-05-10', 17500.00);
+
+-- Populate table: lease_contracts (Optional)
+INSERT INTO lease_contracts (VIN, dealership_id, customer_name, lease_start, lease_end, monthly_payment) VALUES
+('3VW2B7AJ5FM123456', 2, 'Jane Smith', '2023-01-01', '2024-01-01', 350.00); 
